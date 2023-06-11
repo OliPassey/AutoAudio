@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const { MongoClient, ObjectId } = require('mongodb'); // Import ObjectId from mongodb
+const { MongoClient, ObjectId } = require('mongodb');
 const path = require('path');
 
-const mongoUrl = 'mongodb://10.0.3.12:27017';
+const mongoHost = process.env.MONGO_IP || 'localhost';
+const mongoPort = process.env.MONGO_PORT || '27017';
+const mongoUrl = `mongodb://${mongoHost}:${mongoPort}`;
 const dbName = 'audioWidgetDB';
 const collectionName = 'audioItems';
 

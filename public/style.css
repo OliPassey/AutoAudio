@@ -24,7 +24,7 @@ body {
     text-align: center;
     padding: 10px;
     overflow: hidden;
-    background-size: 75% 75%;
+    background-size: 75% auto;
     background-repeat: no-repeat;
     background-position: center;
 }
