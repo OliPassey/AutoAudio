@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Widget - Add Content</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="dark-mode">
+    <form id="addContentForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="service">Service:</label>
+        <select id="service" name="service">
+            <option value="youtube">YouTube</option>
+            <option value="spotify">Spotify</option>
+            <option value="tidal">Tidal</option>
+        </select><br><br>
+
+        <label for="url">URL:</label>
+        <input type="url" id="url" name="url" required><br><br>
+
+        <label for="fanart">Fanart Image URL:</label>
+        <input type="url" id="fanart" name="fanart"><br><br>
+
+        <label for="color">Hex Color:</label>
+        <input type="color" id="color" name="color"><br><br>
+
+        <input type="submit" value="Add Content">
+    </form>
+
+    <table id="audioTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Service</th>
+                <th>URL</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById('addContentForm');
+        const audioTableBody = document.querySelector('#audioTable tbody');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const service = document.getElementById('service').value;
+            const url = document.getElementById('url').value;
+            const fanart = document.getElementById('fanart').value;
+            const color = document.getElementById('color').value;
+
+            const data = { name, service, url, fanart, color };
+
+            fetch('/api/audio', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Audio item added successfully');
+                    form.reset();
+                    fetchAudioItems();
+                } else {
+                    console.error('Error adding audio item');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        function fetchAudioItems() {
+            fetch('/api/audio')
+                .then(response => response.json())
+                .then(audioItems => {
+                    audioTableBody.innerHTML = '';
+
+                    audioItems.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.name}</td>
+                            <td>${item.service}</td>
+                            <td>${item.url}</td>
+                            <td>
+                                <button onclick="editAudioItem('${item._id}', '${item.name}', '${item.service}', '${item.url}', '${item.fanart}', '${item.color}')">Edit</button>
+                                <button onclick="deleteAudioItem('${item._id}')">Delete</button>
+                            </td>
+                        `;
+
+                        audioTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error retrieving audio items:', error);
+                });
+        }
+
+        function editAudioItem(id, name, service, url, fanart, color) {
+            // Populate the form with the existing values
+            document.getElementById('name').value = name;
+            document.getElementById('service').value = service;
+            document.getElementById('url').value = url;
+            document.getElementById('fanart').value = fanart;
+            document.getElementById('color').value = color;
+
+            // Update the form submit event to handle the edit
+            form.removeEventListener('submit', handleAddContent);
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const updatedData = {
+                    name: document.getElementById('name').value,
+                    service: document.getElementById('service').value,
+                    url: document.getElementById('url').value,
+                    fanart: document.getElementById('fanart').value,
+                    color: document.getElementById('color').value
+                };
+
+                fetch(`/api/audio/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Audio item updated successfully');
+                            form.reset();
+                            fetchAudioItems();
+                            // Restore the form to handle the add content event
+                            form.removeEventListener('submit', handleEditContent);
+                            form.addEventListener('submit', handleAddContent);
+                        } else {
+                            console.error('Error updating audio item');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        }
+
+        function deleteAudioItem(id) {
+            if (confirm('Are you sure you want to delete this audio item?')) {
+                fetch(`/api/audio/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Audio item deleted successfully');
+                            fetchAudioItems();
+                        } else {
+                            console.error('Error deleting audio item');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        }
+
+        // Initial fetch of audio items
+        fetchAudioItems();
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Widget</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+<body>
+    <div class="widget-container" id="widgetContainer"></div>
+
+    <script>
+        // Fetch audio items from the server
+        fetch('/api/audio')
+            .then(response => response.json())
+            .then(audioItems => {
+                const widgetContainer = document.getElementById('widgetContainer');
+
+                // Loop through the audio items and create widgets
+                audioItems.forEach(item => {
+                    const widget = document.createElement('div');
+                    widget.className = 'widget';
+
+                    // Check if fanart and color exist
+                    if (item.fanart && item.color) {
+                        widget.style.backgroundImage = `url(${item.fanart})`;
+                        widget.style.backgroundColor = item.color;
+                        widget.innerHTML = `
+                            <div class="widget-text">${item.name}</div>
+                        `;
+                    } else {
+                        // Create an <i> element for the service icon
+                        const serviceIcon = document.createElement('i');
+                        serviceIcon.className = getServiceIconClass(item.service); // Customize this function based on the service data
+
+                        // Add the icon element to the widget
+                        widget.appendChild(serviceIcon);
+
+                        // Add the name as text content
+                        const widgetName = document.createElement('div');
+                        widgetName.textContent = item.name;
+                        widget.appendChild(widgetName);
+                    }
+
+                    // Handle widget click to launch audio
+                    widget.addEventListener('click', () => {
+                        launchAudio(item.url);
+                    });
+
+                    widgetContainer.appendChild(widget);
+                });
+            })
+            .catch(error => {
+                console.error('Error retrieving audio items:', error);
+            });
+
+        function launchAudio(url) {
+            // You can implement the logic to launch the audio source here
+            // For example, for YouTube, you can open the URL in a new window
+            window.open(url, '_blank');
+        }
+
+        function getServiceIconClass(service) {
+            switch (service) {
+                case 'youtube':
+                    return 'fab fa-youtube';
+                case 'spotify':
+                    return 'fab fa-spotify';
+                case 'tidal':
+                    return 'fas fa-music';
+                // Add more cases for other services as needed
+                default:
+                    return 'fas fa-music'; // Default to a generic music icon
+            }
+        }
+    </script>
+</body>
+</html>
