@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { MongoClient, ObjectId } = require('mongodb');
 const path = require('path');
 
-const mongoHost = process.env.MONGO_IP || 'localhost';
+const mongoHost = process.env.MONGO_IP || '10.0.3.12';
 const mongoPort = process.env.MONGO_PORT || '27017';
 const mongoUrl = `mongodb://${mongoHost}:${mongoPort}`;
 const dbName = 'audioWidgetDB';

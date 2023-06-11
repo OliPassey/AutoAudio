@@ -6,40 +6,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body class="dark-mode">
-    <form id="addContentForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+    <header>
+        <div class="banner-logo">
+            <img src="logo.png" alt="Logo">
+            <h1>AutoAudio Content Manager</h1>
+        </div>
+    </header>
 
-        <label for="service">Service:</label>
-        <select id="service" name="service">
-            <option value="youtube">YouTube</option>
-            <option value="spotify">Spotify</option>
-            <option value="tidal">Tidal</option>
-        </select><br><br>
+    <div class="content-container">
+        <h1>Add Audio Content</h1>
+        <form id="addContentForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
 
-        <label for="url">URL:</label>
-        <input type="url" id="url" name="url" required><br><br>
+            <div class="form-group">
+                <label for="service">Service:</label>
+                <select id="service" name="service">
+                    <option value="youtube">YouTube</option>
+                    <option value="spotify">Spotify</option>
+                    <option value="tidal">Tidal</option>
+                </select>
+            </div>
 
-        <label for="fanart">Fanart Image URL:</label>
-        <input type="url" id="fanart" name="fanart"><br><br>
+            <div class="form-group">
+                <label for="url">URL:</label>
+                <input type="url" id="url" name="url" required>
+            </div>
 
-        <label for="color">Hex Color:</label>
-        <input type="color" id="color" name="color"><br><br>
+            <div class="form-group">
+                <label for="fanart">Fanart Image URL:</label>
+                <input type="url" id="fanart" name="fanart">
+            </div>
 
-        <input type="submit" value="Add Content">
-    </form>
+            <div class="form-group">
+                <label for="color">Hex Color:</label>
+                <input type="color" id="color" name="color">
+            </div>
 
-    <table id="audioTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Service</th>
-                <th>URL</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+            <div class="form-group">
+                <input type="submit" value="Add Content">
+            </div>
+        </form>
+
+        <h1>Current Audio Items</h1>
+        <table id="audioTable">
+            <thead>
+                <tr>
+                    <th>Logo</th>
+                    <th>Name</th>
+                    <th>Service</th>
+                    <th>URL</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
     <script>
         const form = document.getElementById('addContentForm');
@@ -86,6 +110,7 @@
                     audioItems.forEach(item => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td><img src="${getServiceLogoUrl(item.service)}" alt="${item.service}"></td>
                             <td>${item.name}</td>
                             <td>${item.service}</td>
                             <td>${item.url}</td>
@@ -165,6 +190,19 @@
                     .catch(error => {
                         console.error('Error:', error);
                     });
+            }
+        }
+
+        function getServiceLogoUrl(service) {
+            switch (service) {
+                case 'youtube':
+                    return 'youtube.png';
+                case 'spotify':
+                    return 'spotify.png';
+                case 'tidal':
+                    return 'tidal.png';
+                default:
+                    return '';
             }
         }
 
