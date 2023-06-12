@@ -6,12 +6,11 @@ A webapp to collate what you are listening to currently from Tidal, Spotify & Yo
 ![image](https://github.com/OliPassey/AutoAudio/assets/7745805/1993ee98-5aa5-4fc3-94e6-6a8ce0237399)
 
 ### Back-End
-![image](https://github.com/OliPassey/AutoAudio/assets/7745805/4496a45f-ae60-45bc-846d-4a64d44497d6)
-
+![image](https://github.com/OliPassey/AutoAudio/assets/7745805/a487237f-d5b3-4003-a0d1-0f15266d96b7)
 
 ## Installation
 
-Best run under docker 
+Best run under docker, behind a reverse proxy  
 ``` bash
 olipassey/audio-widget
 ```
@@ -27,6 +26,9 @@ ExpressJS
 ```bash
 docker run -d -p 3000:3000 -e MONGO_IP=<your-mongo-ip> -e MONGO_PORT=27017 --name audio-widget-test audio-widget:latest
 ```
+From your PC / MAC navigate to http://host:3000/content.html to add new content. All fields are mandatory currently.  
+In your car (or wherever you'll use this) navigate to http://host:3000 and you're good to go.  
+You should run this behind a reverse proxy such as Apache, nginx, caddy etc with a cert (free from LetsEncrypt)
 
 Variables required:
 ```bash
