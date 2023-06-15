@@ -18,13 +18,12 @@ olipassey/audio-widget
 ### Requires
 ```bash
 MongoDB
-NodeJS
-ExpressJS
 ```
 
 ## Usage
 ```bash
-docker run -d -p 3000:3000 -e MONGO_IP=<your-mongo-ip> -e MONGO_PORT=27017 --name audio-widget-test audio-widget:latest
+docker pull olipassey/audio-widget:latest
+docker run -d -p 3000:3000 -e MONGO_IP=<your-mongo-ip> -e MONGO_PORT=27017 --name audio-widget-test olipassey/audio-widget:latest
 ```
 From your PC / MAC navigate to http://host:3000/content.html to add new content. All fields are mandatory currently.  
 In your car (or wherever you'll use this) navigate to http://host:3000 and you're good to go.  
@@ -36,3 +35,17 @@ MONGO_IP
 MONGO_PORT
 ```
 Tested running fine on Unraid & vanilla docker.
+
+### Reverse Proxy Config and restricting access to content.html
+Im just starting my dev journey proper (i come from the infra world) so for now, im locking down access to content.html by apache config and ip restriction.
+When I access the page from within my LAN the IP the server sees is my firewall, any external users present their actual IP - so below works nicely.
+You may need to tweak this depending on your environment. 
+```bash
+  <Location />
+    Require all granted
+  </Location>
+
+  <Location /content.html>
+    Require ip 10.0.0.1
+  </Location>
+```
